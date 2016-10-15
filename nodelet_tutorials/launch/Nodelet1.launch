@@ -1,0 +1,9 @@
+<launch>
+    <!-- @you$ rosrun nodelet nodelet manager __name:=nodelet_manager -->
+    <node pkg="nodelet" type="nodelet"  name="nodelet_manager" args="manager" output="screen"/>
+
+    <!-- @you$ rosrun nodelet nodelet load nodelet_tutorials/Nodelet1 nodelet_manager __name:=Nodelet1_loader -->
+    <node pkg="nodelet" type="nodelet" args="load nodelet_tutorials/Nodelet1 nodelet_manager" name="Nodelet1_loader" output="screen"/>
+
+    <node pkg="nodelet" type="nodelet" name="Nodelet1dash" args="standalone nodelet_tutorials/Nodelet1" output="screen"/>
+</launch>

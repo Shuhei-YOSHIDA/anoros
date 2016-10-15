@@ -2,7 +2,9 @@
 // Shuhei-YOSHIDA 2016/10/15
 #pragma once
 #include <nodelet/nodelet.h>
-
+#include <iostream>
+#include <std_msgs/String.h>
+#include <ros/ros.h>
 // NodeからNodeletへ
 // * 必要なインクルードを加える
 // * main関数はない
@@ -11,14 +13,17 @@
 // * ヘッダ.hでの定義と .cppでの実装で分ける
 // and so on
 
-namespace _Nodelet1 {
+namespace nodelet_tutorials {
     
     class Nodelet1 : public nodelet::Nodelet{
-        
+        private:
+            ros::Publisher pub;
+            ros::Subscriber sub;
+            void inmsgCB(const std_msgs::String::ConstPtr& input);
+            // Nodeletで必要なクラスメソッド．
+            virtual void onInit();
         public:
             Nodelet1();  // コンストラクタ
             ~Nodelet1(); // デストラクタ
-            // Nodeletで必要なクラスメソッド．
-            virtual void onInit();
     };
-} // namespace _Nodelet1
+} // namespace nodelet_tutorials 

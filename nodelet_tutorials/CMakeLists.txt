@@ -101,8 +101,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES nodelet_tutorials
-#  CATKIN_DEPENDS nodelet roscpp std_msgs
+ LIBRARIES tutotial_Nodelet1 
+ CATKIN_DEPENDS nodelet roscpp std_msgs
 #  DEPENDS system_lib
 )
 
@@ -123,7 +123,7 @@ add_library(tutorial_Nodelet1
 )
 target_link_libraries(tutorial_Nodelet1 ${catkin_LIBRARIES})
 if(catkin_EXPORTED_LIBRARIES)
-  add_dependencies(turotial_Nodelet1 ${catkin_EXPORTED_LIBRARIES})
+  add_dependencies(tutotial_Nodelet1 ${catkin_EXPORTED_LIBRARIES})
 endif()
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries

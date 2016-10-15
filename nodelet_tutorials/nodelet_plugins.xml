@@ -1,8 +1,9 @@
 <!-- lib + your class name is path -->
-<library path="lib/libNodelet1">
-    <class name="_Nodelet1/Nodelet1" type="_Nodelet1::Nodelet" base_class_type="nodelet::Nodelet">
-    <description>
-        This is Nodelet1
-    </description>
+<library path="lib/libtutorial_Nodelet1"> <!-- lib + name set in CMakeLists-->
+    <!-- class name="PACKAGEname/c++ClassName" type="namespace::className"  -->
+    <class name="nodelet_tutorials/Nodelet1" type="nodelet_tutorials::Nodelet1" base_class_type="nodelet::Nodelet">
+        <description>
+            This is Nodelet1
+        </description>
     </class>
 </library>
