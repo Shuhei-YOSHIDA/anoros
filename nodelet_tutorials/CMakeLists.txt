@@ -120,6 +120,7 @@ include_directories(
 ## Declare a C++ library
 add_library(tutorial_Nodelet1
   src/Nodelet1.cpp
+  src/Nodelet2.cpp
 )
 target_link_libraries(tutorial_Nodelet1 ${catkin_LIBRARIES})
 if(catkin_EXPORTED_LIBRARIES)

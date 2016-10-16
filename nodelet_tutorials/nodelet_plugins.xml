@@ -6,4 +6,9 @@
             This is Nodelet1
         </description>
     </class>
+    <class name="nodelet_tutorials/Nodelet2" type="nodelet_tutorials::Nodelet2" base_class_type="nodelet::Nodelet">
+        <description>
+            This is Nodelet2
+        </description>
+    </class>
 </library>
