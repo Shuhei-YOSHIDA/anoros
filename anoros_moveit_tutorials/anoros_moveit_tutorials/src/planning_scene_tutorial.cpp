@@ -61,7 +61,7 @@ bool userCallback(const robot_state::RobotState &kinematic_state, bool verbose)
 {
   const double* joint_values = kinematic_state.getJointPositions("r_shoulder_pan_joint");
   return (joint_values[0] > 0.0);
-}
+}// >>実現可能性 feasibilityを見るために定義されてる？
 // END_SUB_TUTORIAL
 
 int main(int argc, char **argv)
@@ -85,9 +85,9 @@ int main(int argc, char **argv)
 // this tutorial, we will instantiate a PlanningScene class directly,
 // but this method of instantiation is only intended for illustration.
 
-  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
+  robot_model_loader::RobotModelLoader robot_model_loader("robot_description");// >>urdfメッシュとかでもいいのか？
   robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
-  planning_scene::PlanningScene planning_scene(kinematic_model);
+  planning_scene::PlanningScene planning_scene(kinematic_model);// >>planning_scene_monitorからどう呼ぶ？
 
 // Collision Checking
 // ^^^^^^^^^^^^^^^^^^
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 // request.
 
   robot_state::RobotState& current_state = planning_scene.getCurrentStateNonConst();
-  current_state.setToRandomPositions();
+  current_state.setToRandomPositions();// >>内部でplanning_sceneに繋がっている．できれば/joint_stateを受けたい
   collision_result.clear();
   planning_scene.checkSelfCollision(collision_request, collision_result);
   ROS_INFO_STREAM("Test 2: Current state is "
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 // collision request.
 
   collision_request.group_name = "right_arm";
-  current_state.setToRandomPositions();
+  current_state.setToRandomPositions(); // >>ランダム姿勢 Test 4 に影響？
   collision_result.clear();
   planning_scene.checkSelfCollision(collision_request, collision_result);
   ROS_INFO_STREAM("Test 3: Current state is "
@@ -160,9 +160,9 @@ int main(int argc, char **argv)
   std::vector<double> joint_values;
   const robot_model::JointModelGroup* joint_model_group =
     current_state.getJointModelGroup("right_arm");
-  current_state.copyJointGroupPositions(joint_model_group, joint_values);
+  current_state.copyJointGroupPositions(joint_model_group, joint_values);// >>joint_values領域確保？
   joint_values[0] = 1.57; //hard-coded since we know collisions will happen here
-  current_state.setJointGroupPositions(joint_model_group, joint_values);
+  current_state.setJointGroupPositions(joint_model_group, joint_values); // >>joint_values値渡し？
   ROS_INFO_STREAM("Current state is "
                   << (current_state.satisfiesBounds(joint_model_group) ? "valid" : "not valid"));
 
@@ -191,6 +191,7 @@ int main(int argc, char **argv)
              it->first.first.c_str(),
              it->first.second.c_str());
   }
+  // >>collision_resultの他のメンバに，接触点座標，法線ベクトルなどがあるか？
 
 // Modifying the Allowed Collision Matrix
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,7 +223,7 @@ int main(int argc, char **argv)
   planning_scene.checkSelfCollision(collision_request, collision_result, copied_state, acm);
   ROS_INFO_STREAM("Test 5: Current state is "
                   << (collision_result.collision ? "in" : "not in")
-                  << " self collision");
+                  << " self collision");// >>ACM登録してTest 4と同じstateなので必ずnot in collision？
 
   // Full Collision Checking
   // ~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,6 +241,7 @@ int main(int argc, char **argv)
   ROS_INFO_STREAM("Test 6: Current state is "
                   << (collision_result.collision ? "in" : "not in")
                   << " self collision");
+  // >>checkWorldCollisionは叩ける？
 
   // Constraint Checking
   // ^^^^^^^^^^^^^^^^^^^
@@ -283,6 +285,7 @@ int main(int argc, char **argv)
   bool constrained = planning_scene.isStateConstrained(copied_state, goal_constraint);
   ROS_INFO_STREAM("Test 7: Random state is "
                   << (constrained ? "constrained" : "not constrained"));
+  // >>ランダムに決定した姿勢が，手先目標値に偶然合うわけが無いので常にnot constrained？
 
 // There's a more efficient way of checking constraints (when you want
 // to check the same constraint over and over again, e.g. inside a
@@ -293,7 +296,7 @@ int main(int argc, char **argv)
   kinematic_constraints::KinematicConstraintSet kinematic_constraint_set(kinematic_model);
   kinematic_constraint_set.add(goal_constraint, planning_scene.getTransforms());
   bool constrained_2 =
-    planning_scene.isStateConstrained(copied_state, kinematic_constraint_set);
+    planning_scene.isStateConstrained(copied_state, kinematic_constraint_set);// >>test 7より多くの情報
   ROS_INFO_STREAM("Test 8: Random state is "
                   << (constrained_2 ? "constrained" : "not constrained"));
 
@@ -321,6 +324,7 @@ int main(int argc, char **argv)
 // Whenever isStateValid is called, three checks are conducted: (a)
 // collision checking (b) constraint checking and (c) feasibility
 // checking using the user-defined callback.
+// >>abcやったあと，どれだけ引っかかったとか干渉深さとか取れるのか？
 
   bool state_valid =
     planning_scene.isStateValid(copied_state, kinematic_constraint_set, "right_arm");
@@ -331,6 +335,7 @@ int main(int argc, char **argv)
 // currently perform collision checking, constraint checking and
 // feasibility checking using user-defined callbacks.
 // END_TUTORIAL
+// >>OMPLがFCL使っているってこと？プラグインとして？
 
   ros::shutdown();
   return 0;
