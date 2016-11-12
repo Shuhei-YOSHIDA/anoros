@@ -123,7 +123,8 @@ int main(int argc, char **argv)
 // new robot configuration. Note in particular that we need to clear
 // the collision_result before making a new collision checking
 // request.
-
+ 
+  // >>robot_state::RobotState と moveit::core::RobotStateがある 前者はgroobyまで？
   robot_state::RobotState& current_state = planning_scene.getCurrentStateNonConst();
   current_state.setToRandomPositions();// >>内部でplanning_sceneに繋がっている．できれば/joint_stateを受けたい
   collision_result.clear();

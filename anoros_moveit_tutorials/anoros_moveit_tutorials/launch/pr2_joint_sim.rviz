@@ -6,6 +6,9 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /MarkerArray1
+        - /MarkerArray1/Status1
+        - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.5
     Tree Height: 463
   - Class: rviz/Selection
@@ -475,10 +478,18 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /contacts_point
+      Name: MarkerArray
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -499,7 +510,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.39775
+      Distance: 2.51819
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -511,10 +522,10 @@ Visualization Manager:
         Z: 0
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.645398
+      Pitch: 0.410399
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 1.0004
+      Yaw: 0.550404
     Saved: ~
 Window Geometry:
   Displays:

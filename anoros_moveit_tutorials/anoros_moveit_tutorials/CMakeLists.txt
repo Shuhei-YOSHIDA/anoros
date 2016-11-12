@@ -135,6 +135,7 @@ include_directories(
 ## Declare a C++ executable
 # add_executable(anoros_moveit_tutorials_node src/anoros_moveit_tutorials_node.cpp)
 add_executable(planning_scene_tutorial src/planning_scene_tutorial.cpp)
+add_executable(collision_detect_sample src/collision_detect_sample.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -145,6 +146,8 @@ add_executable(planning_scene_tutorial src/planning_scene_tutorial.cpp)
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(planning_scene_tutorial ${catkin_LIBRARIES})
+target_link_libraries(collision_detect_sample ${catkin_LIBRARIES})
+
 #############
 ## Install ##
 #############
