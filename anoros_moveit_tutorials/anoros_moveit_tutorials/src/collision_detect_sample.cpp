@@ -169,7 +169,26 @@ int main(int argc, char **argv)
                     m.pose.position.y = it2->pos(1);
                     m.pose.position.z = it2->pos(2);
                     //m.pose.orientation.w = 1;
-                    
+                    ma.markers.push_back(m);
+
+                    //normal vector
+                    m.type = visualization_msgs::Marker::ARROW;
+                    m.id = mcount; mcount++;
+                    //開始点と方向を設定 下の場合とベクトルの向きが逆になる．クォータニオン逆？
+                    //Eigen::Quaterniond q = Eigen::Quaterniond::FromTwoVectors(Eigen::Vector3d::UnitX(), 
+                    //        Eigen::Vector3d(it2->normal(0),it2->normal(1),it2->normal(2)));
+                    //m.pose.orientation.w = q.w(); m.pose.orientation.x = q.x(); m.pose.orientation.y = q.y(); m.pose.orientation.z = q.z();
+                    //m.scale.x = 0.1; m.scale.y = 0.001; m.scale.z = 0.001; 
+                    //開始点と終端点で設定
+                    m.points.push_back(m.pose.position);
+                    m.pose.position.x += it2->normal(0);
+                    m.pose.position.y += it2->normal(1);
+                    m.pose.position.z += it2->normal(2);
+                    m.points.push_back(m.pose.position);
+                    m.pose = geometry_msgs::Pose();
+                    m.scale.x = 0.01; m.scale.y = 0.02; m.scale.z = 0.04; 
+
+                    m.color.r = 0; m.color.b = 1;
                     ma.markers.push_back(m);
                 }
 
