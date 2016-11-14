@@ -10,6 +10,11 @@
 #include <moveit/kinematic_constraints/utils.h>
 #include <eigen_conversions/eigen_msg.h>
 
+// MoveIt! msg
+#include <moveit_msgs/CollisionObject.h>
+#include <moveit_msgs/PlanningScene.h>
+//planning_scene::PlanningScene のクラスはmsgの形式で引数を取るものが多い
+
 // msg
 #include <sensor_msgs/JointState.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -17,6 +22,7 @@
 // Rviz URDF干渉を目視で確認
 
 ros::Publisher markerArray_pub;
+ros::Publisher planningScene_pub;
 ros::Subscriber jointState_sub;
 
 // joint_state callback
@@ -32,6 +38,11 @@ int main(int argc, char **argv)
     ROS_INFO("sample_detect_sample start");
     ros::AsyncSpinner spinner(1);
     spinner.start(); //urdf読み込み〜planning_scene初期化で必要みたい
+
+    ros::NodeHandle nh;
+    markerArray_pub = nh.advertise<visualization_msgs::MarkerArray>("contacts_point", 1);
+    planningScene_pub = nh. advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
+    jointState_sub = nh.subscribe("joint_states", 1, jointState_Callback);
 
     //urdfをパラメータから読み込み
     robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
@@ -66,7 +77,7 @@ int main(int argc, char **argv)
      * void setVariablePositions(const std::map<std::string, double> &variable_map) //変なの入れたら例外
      * etc. 他にも速度とか加速度を設定できるみたい
      * void setJointPositions(...) とVariablePositionsってどう違うのか？
-     * RootLinkの位置設定は？
+     * RootLinkの位置設定は？//world_jointと/odom_conbinedがデフォルト値？
      */
 
     // CollisionRequestの設定 costってなんだ
@@ -100,9 +111,31 @@ int main(int argc, char **argv)
      * Contactがvectorになっているのは，二つの物体の間に衝突点が複数あるから？
      */
 
-    ros::NodeHandle nh;
-    markerArray_pub = nh.advertise<visualization_msgs::MarkerArray>("contacts_point", 1);
-    jointState_sub = nh.subscribe("joint_states", 1, jointState_Callback);
+    // 何か干渉物体を置く rvizによる表示用にplanning_sceneトピックを吐く必要？
+    moveit_msgs::CollisionObject colObj; // 座標系に固定されるのかされないのか？
+    colObj.header.frame_id = "base_footprint";
+    colObj.header.stamp = ros::Time::now();
+    colObj.id = "colObj1";
+    shape_msgs::SolidPrimitive primitive;
+    primitive.type = shape_msgs::SolidPrimitive::BOX; // meshどうやるんだ
+    primitive.dimensions.resize(3);
+    primitive.dimensions[0] = 1.0;
+    primitive.dimensions[1] = 0.04; 
+    primitive.dimensions[2] = 0.04; 
+    colObj.primitives.push_back(primitive);
+    geometry_msgs::Pose priPose;
+    priPose.position.x = 0.5;priPose.position.y = 0.5;priPose.position.z = 0.5;
+    priPose.orientation.w = 1;
+    colObj.primitive_poses.push_back(priPose);
+    colObj.operation = moveit_msgs::CollisionObject::ADD;
+    planning_scene.processCollisionObjectMsg(colObj);
+    //更新が必要？
+
+    //getPlanningSceneMsgとかgetPlanningSceneDiffMsgでmoveit_msgs::PlanningSceneを確保できる．
+    moveit_msgs::PlanningScene sceneMsg;
+    planning_scene.getPlanningSceneMsg(sceneMsg);
+    planningScene_pub.publish(sceneMsg);
+
 
     ros::Rate rate(0.5);
     ROS_INFO("collision checker");
@@ -131,14 +164,20 @@ int main(int argc, char **argv)
             tmpNum++;
         }
         
+        //現在の状態publish
+        planning_scene.getPlanningSceneMsg(sceneMsg);
+        planningScene_pub.publish(sceneMsg);
+
         //干渉計算
         collision_result.clear();
-        planning_scene.checkSelfCollision(collision_request, collision_result);
+        //updateCollisionBodyTransforms()?
+        //planning_scene.checkSelfCollision(collision_request, collision_result);//自己干渉
+        planning_scene.checkCollision(collision_request, collision_result); //世界干渉+自己干渉
         ROS_INFO_STREAM("Test " << count << ": Current state is "
                 << (collision_result.collision ? "in" : "not in")
                 << " self collision");
 
-        //接触点位置にmarkerを送る
+        //接触点位置にmarkerを送る //送っているものがinf かnanあるかも
         visualization_msgs::MarkerArray mad; visualization_msgs::Marker md;
         md.action = 3; mad.markers.push_back(md); markerArray_pub.publish(mad);//全消し
         
@@ -156,7 +195,7 @@ int main(int argc, char **argv)
                 for (it2 = it->second.begin(); it2 != it->second.end(); ++it2)
                 {
                     visualization_msgs::Marker m;
-                    m.header.frame_id = "base_footprint"; //おそらくロボットのRootLinkで接触計算している．
+                    m.header.frame_id = "base_footprint"; 
                     m.header.stamp = ros::Time::now();
                     m.action = visualization_msgs::Marker::ADD;
                     m.id = mcount; mcount++;
@@ -181,9 +220,9 @@ int main(int argc, char **argv)
                     //m.scale.x = 0.1; m.scale.y = 0.001; m.scale.z = 0.001; 
                     //開始点と終端点で設定
                     m.points.push_back(m.pose.position);
-                    m.pose.position.x += it2->normal(0);
-                    m.pose.position.y += it2->normal(1);
-                    m.pose.position.z += it2->normal(2);
+                    m.pose.position.x += (it2->normal(0))*0.05;//矢印の長さを0.05[m]
+                    m.pose.position.y += (it2->normal(1))*0.05;
+                    m.pose.position.z += (it2->normal(2))*0.05;
                     m.points.push_back(m.pose.position);
                     m.pose = geometry_msgs::Pose();
                     m.scale.x = 0.01; m.scale.y = 0.02; m.scale.z = 0.04; 
