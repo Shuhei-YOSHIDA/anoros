@@ -20,6 +20,7 @@
 #include <visualization_msgs/MarkerArray.h>
 
 // Rviz URDF干渉を目視で確認
+// TODO ロボット本体が環境に対して動くように設定すること
 
 ros::Publisher markerArray_pub;
 ros::Publisher planningScene_pub;
@@ -139,6 +140,7 @@ int main(int argc, char **argv)
 
     ros::Rate rate(0.5);
     ROS_INFO("collision checker");
+    ROS_INFO_STREAM("Planning Frame: " << planning_scene.getPlanningFrame()); // /odom_conbinedが返ってくる
     unsigned int count = 0;
     //check
     ROS_INFO("printTransform");
