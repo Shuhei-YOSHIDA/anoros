@@ -136,10 +136,14 @@ include_directories(
 # add_executable(anoros_moveit_tutorials_node src/anoros_moveit_tutorials_node.cpp)
 add_executable(planning_scene_tutorial src/planning_scene_tutorial.cpp)
 add_executable(collision_detect_sample src/collision_detect_sample.cpp)
+add_executable(collision_detect_sample2 src/collision_detect_sample2.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(anoros_moveit_tutorials_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(planning_scene_tutorial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(collision_detect_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(collision_detect_sample2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(anoros_moveit_tutorials_node
@@ -147,6 +151,7 @@ add_executable(collision_detect_sample src/collision_detect_sample.cpp)
 # )
 target_link_libraries(planning_scene_tutorial ${catkin_LIBRARIES})
 target_link_libraries(collision_detect_sample ${catkin_LIBRARIES})
+target_link_libraries(collision_detect_sample2 ${catkin_LIBRARIES})
 
 #############
 ## Install ##

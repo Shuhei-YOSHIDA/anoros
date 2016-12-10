@@ -1,7 +1,11 @@
-// collision_detect_sample.cpp
+// collision_detect_sample2.cpp
 // Shuhei-YOSHIDA 2016/11/11
 
 #include<ros/ros.h>
+
+// Tf2
+#include <tf2_ros/transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
 
 // MoveIt!
 #include <moveit/robot_model_loader/robot_model_loader.h>
@@ -26,12 +30,39 @@ ros::Publisher markerArray_pub;
 ros::Publisher planningScene_pub;
 ros::Subscriber jointState_sub;
 
+
 // joint_state callback
 sensor_msgs::JointState joint_state;
 void jointState_Callback(const sensor_msgs::JointState::ConstPtr& msg)
 {
     joint_state = *msg;
 }
+
+//Tf broadcast
+void TfBroadcast(double time, double *pos)
+{
+    static tf2_ros::TransformBroadcaster br;
+    geometry_msgs::TransformStamped ts;
+
+    ts.header.stamp = ros::Time::now();
+    ts.header.frame_id = "odom_conbined";
+    ts.child_frame_id = "base_footprint";
+    //ts.header.frame_id = "base_footprint";
+    //ts.child_frame_id = "base_link";
+    
+    double omega = 2*M_PI*0.1;
+    double r = 1.0;
+    ts.transform.translation.x = r*cos(omega*time);
+    ts.transform.translation.y = r*sin(omega*time);
+    ts.transform.translation.z = 0;
+    ts.transform.rotation.w = 1;
+
+    br.sendTransform(ts);
+    pos[0] = r*cos(omega*time);
+    pos[1] = r*sin(omega*time);
+    pos[2] = omega*time;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -114,7 +145,7 @@ int main(int argc, char **argv)
 
     // 何か干渉物体を置く rvizによる表示用にplanning_sceneトピックを吐く必要？
     moveit_msgs::CollisionObject colObj; // 座標系に固定されるのかされないのか？
-    colObj.header.frame_id = "base_footprint";
+    colObj.header.frame_id = "odom_conbined";
     colObj.header.stamp = ros::Time::now();
     colObj.id = "colObj1";
     shape_msgs::SolidPrimitive primitive;
@@ -143,8 +174,19 @@ int main(int argc, char **argv)
     ROS_INFO_STREAM("Planning Frame: " << planning_scene.getPlanningFrame()); // /odom_conbinedが返ってくる
     unsigned int count = 0;
     //check
-    ROS_INFO("printTransform");
-    current_state.printTransforms();
+    //ROS_INFO("printTransform");
+    //current_state.printTransforms();
+    const moveit::core::JointModel* joint = current_state.getJointModel("world_joint");
+    const std::map<std::string, double> variable_map;
+    current_state.setVariablePositions(variable_map);
+    ROS_INFO_STREAM("joint name:" << joint->getChildLinkModel()->getName() << " joint type: " << joint->getTypeName()); //PLANARが入っているので，x,y,thetaで指定
+    std::map<std::string, double>::const_iterator itr;
+    for (itr = variable_map.begin(); itr != variable_map.end(); itr++) {
+        std::cout << "key = " << itr->first << ", val = " << itr->second << std::endl; //何も入ってない
+    }
+    const double pos[6] ={0.4, 0.4, 1.4};
+    current_state.setJointPositions("world_joint", pos);
+    double time = 0;
 
     while (ros::ok()) {
         ROS_INFO("check");
@@ -159,6 +201,14 @@ int main(int argc, char **argv)
         // joint_stateを受け取って干渉計算して，接触点をトピックで吐き出す
 
         // RootLinkの位置設定
+        double pos[3];
+        TfBroadcast(time, pos);
+        time += 2;
+        current_state = planning_scene.getCurrentStateNonConst(); // 更新?
+        current_state.setJointPositions("world_joint", pos);
+        //PLANARジョイントなので，posがx,y,theta, /odom_conbined -> world_joint -> /base_footprint 
+        //最初に置いた障害物は動かないみたい
+
         sensor_msgs::JointState tmp = joint_state;
         unsigned int tmpNum = 0;
         for (std::vector<std::string>::iterator itr = tmp.name.begin(); itr < tmp.name.end(); itr++) {
@@ -167,8 +217,9 @@ int main(int argc, char **argv)
         }
         
         //現在の状態publish
-        planning_scene.getPlanningSceneMsg(sceneMsg);
-        planningScene_pub.publish(sceneMsg);
+        moveit_msgs::PlanningScene sceneMsg_;
+        planning_scene.getPlanningSceneMsg(sceneMsg_);
+        planningScene_pub.publish(sceneMsg_);
 
         //干渉計算
         collision_result.clear();

@@ -10,12 +10,6 @@ Panels:
         - /MarkerArray1/Namespaces1
         - /PlanningScene1
         - /PlanningScene1/Scene Robot1
-        - /PlanningScene1/Scene Robot1/Links1
-        - /PlanningScene1/Scene Robot1/Links1/l_forearm_link1
-        - /PlanningScene1/Scene Robot1/Links1/l_gripper_palm_link1
-        - /PlanningScene1/Scene Robot1/Links1/l_gripper_r_finger_link1
-        - /PlanningScene1/Scene Robot1/Links1/l_gripper_r_finger_tip_link1
-        - /PlanningScene1/Scene Robot1/Links1/l_shoulder_lift_link1
       Splitter Ratio: 0.5
     Tree Height: 463
   - Class: rviz/Selection
@@ -86,7 +80,7 @@ Visualization Manager:
       Marker Topic: /contacts_point
       Name: MarkerArray
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: moveit_rviz_plugin/PlanningScene
@@ -235,7 +229,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
           l_forearm_link:
-            Alpha: 0.7
+            Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
@@ -276,17 +270,17 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
           l_gripper_palm_link:
-            Alpha: 0.7
+            Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
           l_gripper_r_finger_link:
-            Alpha: 0.5
+            Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
           l_gripper_r_finger_tip_link:
-            Alpha: 0.7
+            Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
@@ -521,7 +515,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: odom_conbined
     Frame Rate: 30
   Name: root
   Tools:
@@ -542,7 +536,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.08177
+      Distance: 3.55671
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -554,10 +548,10 @@ Visualization Manager:
         Z: 1.19209e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0904
+      Pitch: 0.824797
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 0.125423
+      Yaw: 0.530423
     Saved: ~
 Window Geometry:
   Displays:
