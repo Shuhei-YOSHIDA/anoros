@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_ros
   urdf
+  fcl
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,6 +138,7 @@ include_directories(
 add_executable(planning_scene_tutorial src/planning_scene_tutorial.cpp)
 add_executable(collision_detect_sample src/collision_detect_sample.cpp)
 add_executable(collision_detect_sample2 src/collision_detect_sample2.cpp)
+add_executable(collision_detect_sample_fcl src/collision_detect_sample_fcl.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -144,6 +146,7 @@ add_executable(collision_detect_sample2 src/collision_detect_sample2.cpp)
 add_dependencies(planning_scene_tutorial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(collision_detect_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(collision_detect_sample2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(collision_detect_sample_fcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(anoros_moveit_tutorials_node
@@ -152,6 +155,7 @@ add_dependencies(collision_detect_sample2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${
 target_link_libraries(planning_scene_tutorial ${catkin_LIBRARIES})
 target_link_libraries(collision_detect_sample ${catkin_LIBRARIES})
 target_link_libraries(collision_detect_sample2 ${catkin_LIBRARIES})
+target_link_libraries(collision_detect_sample_fcl ${catkin_LIBRARIES})
 
 #############
 ## Install ##

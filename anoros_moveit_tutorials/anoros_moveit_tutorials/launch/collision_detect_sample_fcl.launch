@@ -1,0 +1,10 @@
+<launch>
+    <!-- <include file="$(find anoros_moveit_tutorials)/launch/pr2_joint_simulation.launch"/> -->
+    <!-- configuration by moveit setup assistant -->
+    <!-- parameters definition -->
+    <!-- <include file="$(find pr2_moveit_config)/launch/planning_context.launch"/> -->
+
+    <node name="collision_detect_sample_fcl" pkg="anoros_moveit_tutorials" type="collision_detect_sample_fcl" respawn="false" output="screen">
+        <rosparam command="load" file="$(find pr2_moveit_config)/config/kinematics.yaml"/>
+    </node>
+</launch>
