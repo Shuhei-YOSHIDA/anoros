@@ -204,3 +204,9 @@ target_link_libraries(collision_detect_sample_fcl ${catkin_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+#############
+##  C++11  ##
+#############
+
+set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
