@@ -1,5 +1,8 @@
 // collision_detect_sample_fcl.cpp
 // Shuhei-YOSHIDA 2017/3/29
+// planning_scene::PlanningScene class 
+// ->getCollisionWorld() ->collision_detection::CollisionWorld ->FCLObject
+// でプラグインのFCLにアクセスできるはず
 #include<ros/ros.h>
 
 // MoveIt!
@@ -24,7 +27,7 @@
 #include <fcl/distance.h>
 
 using namespace fcl;
-using namespace std;
+//using namespace std;
 int main(int argc, char** argv)
 {
     DistanceResult result;
@@ -44,22 +47,32 @@ int main(int argc, char** argv)
 
 
     Sphere sphere(1);
-    Box box(10, 2, 10);
+    Box box(10, 2, 10); //Box-Sphere collision is strange?
+    Capsule capsule(1, 10);//Capsule-Sphere may be ok
 
     boost::shared_ptr< CollisionGeometry > cgeomSphere_(&sphere);
     boost::shared_ptr< CollisionGeometry > cgeomBox_(&box);
+    boost::shared_ptr< CollisionGeometry > cgeomCapsule_(&capsule);
 
     CollisionObject *objSphere = new CollisionObject(cgeomSphere_, rotSphere, trSphere);
-    CollisionObject *objBox = new CollisionObject(cgeomBox_, rotBox, trBox);
+    CollisionObject *objBox = new CollisionObject(cgeomBox_, rotBox, trBox);//strange
+    CollisionObject *objCapsule = new CollisionObject(cgeomCapsule_, rotBox, trBox);//ok
 
     result.clear();
     DistanceRequest request(true);
     distance = fcl::distance(objSphere, objBox, request, result) ;
 
+    std::cout << "distance = " << distance << std::endl;
+    std::cout << " point on sphere: x = " << result.nearest_points[0].data[0] << " y = " << result.nearest_points[0].data[1] << " z = " << result.nearest_points[0].data[2] << std::endl;
+    std::cout << " point on box: x = " << result.nearest_points[1].data[0] << " y = " << result.nearest_points[1].data[1] << " z = " << result.nearest_points[1].data[2] << std::endl;
 
-    cout << "distance = " << distance << endl;
-    cout << " point on sphere: x = " << result.nearest_points[0].data[0] << " y = " << result.nearest_points[0].data[1] << " z = " << result.nearest_points[0].data[2] << endl;
-    cout << " point on box: x = " << result.nearest_points[1].data[0] << " y = " << result.nearest_points[1].data[1] << " z = " << result.nearest_points[1].data[2] << endl;
+    result.clear();
+    DistanceRequest request2(true);
+    distance = fcl::distance(objSphere, objCapsule, request2, result) ;
+
+    std::cout << "distance = " << distance << std::endl;
+    std::cout << " point on sphere: x = " << result.nearest_points[0].data[0] << " y = " << result.nearest_points[0].data[1] << " z = " << result.nearest_points[0].data[2] << std::endl;
+    std::cout << " point on capsule: x = " << result.nearest_points[1].data[0] << " y = " << result.nearest_points[1].data[1] << " z = " << result.nearest_points[1].data[2] << std::endl;
 
     return 0;
 }

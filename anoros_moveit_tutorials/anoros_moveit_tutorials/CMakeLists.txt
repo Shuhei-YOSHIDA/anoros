@@ -17,7 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+## find_package(Boost REQUIRED COMPONENTS system)
+find_package(fcl REQUIRED COMPONENTS)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -109,7 +110,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES anoros_moveit_tutorials
 #  CATKIN_DEPENDS moveit_core moveit_ros_planning moveit_ros_planning_interface roscpp std_msgs tf2 tf2_ros urdf
-#  DEPENDS system_lib
+#DEPENDS system_lib fcl
 )
 
 ###########
@@ -146,7 +147,7 @@ add_executable(collision_detect_sample_fcl src/collision_detect_sample_fcl.cpp)
 add_dependencies(planning_scene_tutorial ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(collision_detect_sample ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(collision_detect_sample2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(collision_detect_sample_fcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(collision_detect_sample_fcl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} fcl)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(anoros_moveit_tutorials_node
@@ -155,7 +156,7 @@ add_dependencies(collision_detect_sample_fcl ${${PROJECT_NAME}_EXPORTED_TARGETS}
 target_link_libraries(planning_scene_tutorial ${catkin_LIBRARIES})
 target_link_libraries(collision_detect_sample ${catkin_LIBRARIES})
 target_link_libraries(collision_detect_sample2 ${catkin_LIBRARIES})
-target_link_libraries(collision_detect_sample_fcl ${catkin_LIBRARIES})
+target_link_libraries(collision_detect_sample_fcl ${catkin_LIBRARIES} fcl)
 
 #############
 ## Install ##
