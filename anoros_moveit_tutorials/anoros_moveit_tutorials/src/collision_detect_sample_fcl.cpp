@@ -50,9 +50,12 @@ int main(int argc, char** argv)
     Box box(10, 2, 10); //Box-Sphere collision is strange?
     Capsule capsule(1, 10);//Capsule-Sphere may be ok
 
-    boost::shared_ptr< CollisionGeometry > cgeomSphere_(&sphere);
-    boost::shared_ptr< CollisionGeometry > cgeomBox_(&box);
-    boost::shared_ptr< CollisionGeometry > cgeomCapsule_(&capsule);
+    //boost::shared_ptr< CollisionGeometry > cgeomSphere_(&sphere);
+    //boost::shared_ptr< CollisionGeometry > cgeomBox_(&box);
+    //boost::shared_ptr< CollisionGeometry > cgeomCapsule_(&capsule);
+    std::shared_ptr< CollisionGeometry > cgeomSphere_(&sphere);
+    std::shared_ptr< CollisionGeometry > cgeomBox_(&box);
+    std::shared_ptr< CollisionGeometry > cgeomCapsule_(&capsule);
 
     CollisionObject *objSphere = new CollisionObject(cgeomSphere_, rotSphere, trSphere);
     CollisionObject *objBox = new CollisionObject(cgeomBox_, rotBox, trBox);//strange
